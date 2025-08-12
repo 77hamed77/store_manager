@@ -1,0 +1,100 @@
+{% extends 'store/base.html' %}
+
+{% block title %}قائمة المنتجات{% endblock %}
+
+{% block content %}
+<!-- 1. رأس الصفحة: العنوان والإجراءات الرئيسية -->
+<div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+    <h1 class="text-3xl font-bold text-gray-800">قائمة المنتجات</h1>
+    <a href="{% url 'admin:store_product_add' %}" target="_blank" class="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+        <span>إضافة منتج جديد</span>
+    </a>
+</div>
+
+<!-- 2. أدوات البحث والفرز المتقدمة -->
+<form method="GET" class="mb-8 p-4 bg-white rounded-lg shadow-md">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="md:col-span-2">
+            <label for="product-search" class="sr-only">بحث</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
+                </div>
+                <input type="search" id="product-search" name="q" class="w-full p-2 pl-10 border rounded-lg" placeholder="ابحث بالاسم أو الرمز..." value="{{ search_query }}">
+            </div>
+        </div>
+        <div>
+            <label for="category-filter" class="sr-only">فرز حسب التصنيف</label>
+            <select name="category" id="category-filter" class="w-full p-2 border rounded-lg" onchange="this.form.submit()">
+                <option value="">كل التصنيفات</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</form>
+
+<!-- 3. جدول المنتجات المحسّن -->
+<div class="overflow-x-auto bg-white shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-right text-gray-600">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+            <tr>
+                <th scope="col" class="py-3 px-6">اسم القطعة</th>
+                <th scope="col" class="py-3 px-6">التصنيف</th>
+                <th scope="col" class="py-3 px-6">المخزون</th>
+                <th scope="col" class="py-3 px-6">سعر البيع</th>
+                <th scope="col" class="py-3 px-6">الربح</th>
+                <th scope="col" class="py-3 px-6">إجراء</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in page_obj %}
+            <tr class="border-b hover:bg-gray-50 {% if product.is_low_on_stock %}bg-red-50 hover:bg-red-100{% endif %}">
+                <th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">{{ product.name }}</th>
+                <td class="py-4 px-6">{{ product.category.name|default:"-" }}</td>
+                <td class="py-4 px-6">
+                    <div class="flex items-center gap-2">
+                        <span class="font-mono font-semibold">{{ product.stock_quantity }}</span>
+                        {% if product.is_low_on_stock %}
+                            <span class="px-2 py-0.5 text-xs font-semibold text-red-700 bg-red-100 rounded-full">نقص</span>
+                        {% endif %}
+                    </div>
+                </td>
+                <td class="py-4 px-6 text-green-600 font-bold font-mono">{{ product.sale_price|floatformat:2 }}</td>
+                <td class="py-4 px-6 text-blue-600 font-mono">{{ product.get_profit|floatformat:2 }}</td>
+                <td class="py-4 px-6">
+                    <a href="{% url 'admin:store_product_change' product.id %}" target="_blank" class="font-medium text-indigo-600 hover:underline">تعديل</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center py-8 text-gray-500">
+                    <p>لا توجد منتجات مطابقة للبحث.</p>
+                    <a href="{% url 'product-list' %}" class="text-blue-600 hover:underline">اعرض كل المنتجات</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- 4. شريط ترقيم الصفحات (Pagination) -->
+{% if page_obj.has_other_pages %}
+<div class="flex justify-center items-center mt-8 space-x-4 space-x-reverse">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}&q={{ search_query }}&category={{ selected_category }}" class="px-4 py-2 bg-white border rounded-lg hover:bg-gray-100">السابق</a>
+    {% endif %}
+
+    <span class="text-gray-700">
+        صفحة {{ page_obj.number }} من {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}&q={{ search_query }}&category={{ selected_category }}" class="px-4 py-2 bg-white border rounded-lg hover:bg-gray-100">التالي</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}

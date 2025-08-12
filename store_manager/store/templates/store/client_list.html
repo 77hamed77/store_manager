@@ -1,0 +1,78 @@
+{% extends 'store/base.html' %}
+
+{% block title %}قائمة العملاء والديون{% endblock %}
+
+{% block content %}
+<!-- 1. رأس الصفحة: العنوان والإجراءات الرئيسية -->
+<div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+    <h1 class="text-2xl font-bold text-gray-800">العملاء والديون</h1>
+<a href="{% url 'client-add' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+        <span>إضافة عميل جديد</span>
+    </a>
+</div>
+
+<!-- 2. بطاقات الملخص: الصورة الكبيرة أولاً -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-semibold text-gray-500">إجمالي الديون القائمة</h3>
+        <p class="text-3xl font-bold text-red-600 mt-2 font-mono">{{ total_debt_sum|floatformat:2 }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-semibold text-gray-500">عدد المدينين</h3>
+        <p class="text-3xl font-bold text-blue-600 mt-2 font-mono">{{ clients|length }}</p>
+    </div>
+</div>
+
+<!-- 3. شريط البحث: أداة أساسية للوصول السريع -->
+<form method="GET" class="mb-8">
+    <div class="relative">
+        <input type="search" name="q" class="w-full p-3 pl-10 border rounded-lg" placeholder="ابحث بالاسم أو رقم الهاتف..." value="{{ search_query }}">
+        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
+        </div>
+    </div>
+</form>
+
+<!-- 4. جدول العملاء المحسّن: بيانات ذكية وقابلة للتنفيذ -->
+<div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <table class="min-w-full">
+        <thead class="bg-gray-200">
+            <tr>
+                <th class="py-3 px-4 text-right text-sm font-semibold text-gray-600">اسم العميل</th>
+                <th class="py-3 px-4 text-right text-sm font-semibold text-gray-600">رقم الهاتف</th>
+                <th class="py-3 px-4 text-right text-sm font-semibold text-gray-600">آخر تعامل</th>
+                <th class="py-3 px-4 text-right text-sm font-semibold text-gray-600">إجمالي الدين</th>
+                <th class="py-3 px-4 text-right text-sm font-semibold text-gray-600">إجراء</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+            <tr class="border-b hover:bg-gray-50">
+                <td class="py-3 px-4 font-medium">{{ client.name }}</td>
+                <td class="py-3 px-4 font-mono">
+                    {% if client.phone %}
+                        <div class="flex items-center gap-3 justify-end">
+                            <span>{{ client.phone }}</span>
+                            <a href="https://wa.me/{{ client.phone }}" target="_blank" title="تواصل عبر واتساب">
+                                <svg class="w-5 h-5 text-green-500 hover:text-green-700" fill="currentColor" viewBox="0 0 20 20"><path d="M10.001,0C4.486,0,0,4.486,0,10.001c0,5.515,4.486,10,10.001,10c5.514,0,10-4.485,10-10C20,4.486,15.515,0,10.001,0z M14.162,12.787c-0.121-0.24-0.849-0.985-0.985-1.12c-0.137-0.137-0.303-0.198-0.53-0.076c-0.227,0.121-0.79,0.79-0.926,0.926c-0.137,0.137-0.24,0.165-0.438-0.033c-0.198-0.198-0.849-0.644-1.62-1.387c-0.595-0.595-1-1.25-1.12-1.48c-0.121-0.227-0.01-0.33,0.093-0.424c0.104-0.093,0.227-0.227,0.33-0.33c0.104-0.104,0.137-0.198,0.198-0.33c0.061-0.137,0.033-0.273-0.033-0.395c-0.065-0.121-0.595-1.419-0.812-1.949c-0.217-0.53-0.424-0.469-0.595-0.469c-0.165,0-0.33,0-0.53,0c-0.198,0-0.53,0.065-0.79,0.33c-0.26,0.26-0.985,0.954-0.985,2.372c0,1.418,1.018,2.76,1.154,2.958c0.137,0.198,1.98,3.159,4.84,4.24c2.86,1.081,2.86,0.725,3.36,0.66c0.5-0.065,1.581-0.659,1.81-1.282c0.227-0.623,0.227-1.154,0.165-1.282C14.465,12.985,14.283,12.91,14.162,12.787z"></path></svg>
+                            </a>
+                        </div>
+                    {% else %}-{% endif %}
+                </td>
+                <td class="py-3 px-4 text-gray-500">{{ client.last_transaction_date|date:"Y-m-d"|default:"-" }}</td>
+                <td class="py-3 px-4 font-bold text-red-600 font-mono">{{ client.total_debt|floatformat:2 }}</td>
+                <td class="py-3 px-4">
+                     <a href="{% url 'client-delete' client.id %}" class="text-red-600 hover:text-red-800 text-sm font-medium">حذف</a>
+                    <a href="{% url 'client-edit' client.id %}" class="text-yellow-600 hover:text-yellow-900 ml-4">تعديل</a>
+                    <a href="{% url 'client-detail' client.id %}" class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 text-sm">عرض التفاصيل</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center py-8 text-gray-500">لا يوجد عملاء عليهم ديون حالياً.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
