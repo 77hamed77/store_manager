@@ -1,0 +1,128 @@
+{% extends 'store/base.html' %}
+
+{% block title %}لوحة التحكم الرئيسية{% endblock %}
+
+{% block content %}
+<!-- 1. قسم الترحيب والإجراءات السريعة: الأهم أولاً -->
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">صباح الخير!</h1>
+    <p class="text-gray-600">هذا هو ملخص أداء المحل اليوم.</p>
+    
+    <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <a href="{% url 'pos-view' %}" class="bg-blue-600 text-white flex flex-col items-center justify-center p-4 rounded-lg shadow-lg hover:bg-blue-700 transition-transform transform hover:scale-105">
+            <svg class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            <span class="font-semibold">فاتورة جديدة</span>
+        </a>
+        <a href="{% url 'admin:store_product_add' %}" target="_blank" class="bg-green-600 text-white flex flex-col items-center justify-center p-4 rounded-lg shadow-lg hover:bg-green-700 transition-transform transform hover:scale-105">
+            <svg class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span class="font-semibold">إضافة منتج</span>
+        </a>
+<a href="{% url 'client-add' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">            <svg class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
+            <span class="font-semibold">إضافة عميل</span>
+        </a>
+        <a href="{% url 'client-list' %}" class="bg-red-500 text-white flex flex-col items-center justify-center p-4 rounded-lg shadow-lg hover:bg-red-600 transition-transform transform hover:scale-105">
+            <svg class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 0l-3-3m3 3l-3 7m-1-7l-3 3m3-3l-3 7m6-4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+            <span class="font-semibold">تسجيل دفعة</span>
+        </a>
+    </div>
+</div>
+
+<!-- 2. قسم البطاقات التفاعلية -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- بطاقة الديون -->
+    <a href="{% url 'client-list' %}" class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow block">
+        <h3 class="text-lg font-semibold text-gray-600">الديون القائمة</h3>
+        <div class="mt-4 flex justify-between items-baseline">
+            <p class="text-4xl font-bold text-red-600 font-mono">{{ total_debt_sum|floatformat:2 }}</p>
+            <p class="text-gray-500">على {{ top_debtors|length }} عملاء</p>
+        </div>
+        <div class="mt-4 border-t pt-4">
+            <h4 class="font-semibold mb-2 text-sm">أعلى المدينين:</h4>
+            <ul class="space-y-2">
+                {% for client in top_debtors %}
+                <li class="flex justify-between items-center text-sm">
+                    <span>{{ client.name }}</span>
+                    <span class="font-semibold text-red-500 font-mono">{{ client.total_debt|floatformat:2 }}</span>
+                </li>
+                {% empty %}
+                <li class="text-gray-400">لا توجد ديون مسجلة حالياً.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </a>
+
+    <!-- بطاقة النواقص -->
+    <a href="{% url 'low-stock-report' %}" class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow block">
+        <h3 class="text-lg font-semibold text-gray-600">نواقص المخزون</h3>
+        <div class="mt-4 flex justify-between items-baseline">
+            <p class="text-4xl font-bold text-yellow-600 font-mono">{{ top_low_stock|length }}</p>
+            <p class="text-gray-500">منتجات تحتاج لإعادة طلب</p>
+        </div>
+        <div class="mt-4 border-t pt-4">
+            <h4 class="font-semibold mb-2 text-sm">أهم النواقص:</h4>
+            <ul class="space-y-2">
+                {% for product in top_low_stock %}
+                <li class="flex justify-between items-center text-sm">
+                    <span>{{ product.name }}</span>
+                    <span class="font-semibold text-yellow-600">المتبقي: {{ product.stock_quantity }}</span>
+                </li>
+                {% empty %}
+                <li class="text-gray-400">🎉 المخزون ممتاز!</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </a>
+</div>
+
+<!-- 3. قسم الملاحظات والإحصائيات اليومية -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <!-- بطاقة ملاحظات سريعة -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="font-bold text-lg mb-4">ملاحظات سريعة</h3>
+        <form method="POST" action="{% url 'dashboard' %}" class="mb-4">
+            {% csrf_token %}
+            <textarea name="note_content" rows="2" class="w-full p-2 border rounded-lg mb-2" placeholder="اكتب ملاحظة جديدة..."></textarea>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" name="is_important" id="is_important" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                    <label for="is_important" class="text-sm text-gray-700">ملاحظة هامة</label>
+                </div>
+                <button type="submit" class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600">إضافة</button>
+            </div>
+        </form>
+        <div class="border-t pt-4">
+            <h4 class="font-semibold mb-2">آخر الملاحظات:</h4>
+            <ul class="space-y-2 text-sm text-gray-600 list-disc list-inside">
+                {% for note in recent_notes %}
+                <li class="{% if note.is_important %} text-red-700 font-bold {% endif %}">
+                     {% if note.is_important %}⭐ {% endif %}{{ note.content }}
+                </li>
+                {% empty %}
+                <li class="list-none">لا توجد ملاحظات.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- بطاقة إحصائيات اليوم -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="font-bold text-lg mb-4">ملخص اليوم</h3>
+        <div class="space-y-4">
+            <div class="flex items-start justify-between">
+                <div>
+                    <h4 class="font-semibold text-gray-500">مبيعات اليوم</h4>
+                    <p class="text-3xl font-bold text-green-600 font-mono">{{ daily_sales_total|floatformat:2 }}</p>
+                </div>
+                <div class="bg-green-100 p-3 rounded-full"><svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg></div>
+            </div>
+            <div class="flex items-start justify-between">
+                <div>
+                    <h4 class="font-semibold text-gray-500">فواتير اليوم</h4>
+                    <p class="text-3xl font-bold text-blue-600 font-mono">{{ daily_invoice_count }}</p>
+                </div>
+                <div class="bg-blue-100 p-3 rounded-full"><svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
