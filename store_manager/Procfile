@@ -1,0 +1,1 @@
+web: gunicorn store_manager.wsgi:application

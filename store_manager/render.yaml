@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: storemanager # اسم أبسط
+    env: python
+    pythonVersion: 3.10.11
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn store_manager.wsgi:application"
+    healthCheckPath: /
+    envVars:
+      # --- المتغيرات الأساسية ---
+      - key: SECRET_KEY
+        generateValue: true # Render سيقوم بتوليد مفتاح سري آمن
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "storemanager.onrender.com" # تأكد من أن هذا هو اسم خدمتك
+      - key: WEB_CONCURRENCY
+        value: "4" # قيمة موصى بها من Render
+
+      # --- قاعدة البيانات (Supabase) ---
+      - key: DATABASE_URL
+        value: "postgresql://postgres.nvjxpiicbznoyfqmuqia:rax111rax@aws-1-eu-central-1.pooler.supabase.com:6543/postgres"
+
+      # --- إعدادات بوت التليجرام ---
+      - key: TELEGRAM_BOT_TOKEN
+        value: "7831308401:AAGOv413kZBkgIKihaKebbzFrDNB0_LediQ"
+      - key: TELEGRAM_CHAT_ID
+        value: "6256197597"
+
+      # --- إعدادات تخزين الملفات (Supabase S3) ---
+      - key: USE_S3
+        value: "True" # تفعيل رفع الملفات على Supabase
+      - key: SUPABASE_S3_ACCESS_KEY_ID
+        value: "313c9deb98be69e2e26e6d7f9d7e31b6"
+      - key: SUPABASE_S3_SECRET_ACCESS_KEY
+        value: "2f84c6639232f5daf3af79e8f6332e1e9ddadcb5d40983db4885a0005e3648b8"
+      - key: SUPABASE_S3_BUCKET_NAME
+        value: "storemanagerbucket"
+      - key: SUPABASE_S3_ENDPOINT_URL
+        value: "https://nvjxpiicbznoyfqmuqia.storage.supabase.co/storage/v1/s3"
+      - key: SUPABASE_S3_REGION_NAME
+        value: "eu-central-1"
