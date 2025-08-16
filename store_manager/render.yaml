@@ -13,7 +13,7 @@ services:
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: "storemanager.onrender.com" # تأكد من أن هذا هو اسم خدمتك
+        value: "store-manager-f8ka.onrender.com" # تأكد من أن هذا هو اسم خدمتك
       - key: WEB_CONCURRENCY
         value: "4" # قيمة موصى بها من Render
 
