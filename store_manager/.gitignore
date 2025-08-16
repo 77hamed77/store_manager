@@ -1,7 +1,17 @@
+# .gitignore
+
+# Environment variables
 .env
-venv/
+
+# Django local database
+db.sqlite3
+
+# Static files collected for production
+staticfiles/
+
+# User-uploaded media files for local development
+media/
+
+# Python cache
 __pycache__/
 *.pyc
-*.sqlite3
-staticfiles/
-mediafiles/
