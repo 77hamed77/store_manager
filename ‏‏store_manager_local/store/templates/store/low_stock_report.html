@@ -1,73 +1,0 @@
-{% extends 'store/base.html' %}
-
-{% block title %}تقرير نواقص المنتجات{% endblock %}
-
-{% block content %}
-<!-- 1. رأس الصفحة: العنوان والإجراءات الرئيسية -->
-<div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-    <h1 class="text-2xl font-bold text-gray-800">تقرير نواقص المنتجات</h1>
-    <div class="flex items-center gap-3">
-        <button onclick="window.print()" class="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
-            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7V9h6v3z" clip-rule="evenodd" /></svg>
-            <span>طباعة التقرير</span>
-        </button>
-        <a href="{% url 'export-low-stock-csv' %}" class="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v4a1 1 0 102 0V7z" /></svg>
-            <span>تصدير CSV</span>
-        </a>
-    </div>
-</div>
-
-<!-- 2. أدوات الفرز والبحث: للتحكم الكامل في التقرير -->
-<div class="mb-6">
-    <form method="GET" class="flex flex-col sm:flex-row gap-4">
-        <input type="search" name="q" class="w-full sm:w-1/2 p-2 border rounded-lg" placeholder="ابحث بالاسم أو الرمز..." value="{{ search_query }}">
-        <select name="sort_by" class="w-full sm:w-1/4 p-2 border rounded-lg">
-            <option value="deficit" {% if sort_by == 'deficit' %}selected{% endif %}>فرز حسب الأهمية (الأكثر نقصًا)</option>
-            <option value="name" {% if sort_by == 'name' %}selected{% endif %}>فرز حسب الاسم</option>
-            <option value="stock" {% if sort_by == 'stock' %}selected{% endif %}>فرز حسب الكمية المتبقية</option>
-        </select>
-        <button type="submit" class="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">تطبيق</button>
-    </form>
-</div>
-
-<!-- 3. جدول النواقص المحسّن: بيانات ذكية وواضحة بصريًا -->
-<div class="bg-white shadow-md rounded-lg overflow-hidden">
-    <table class="min-w-full">
-        <thead class="bg-gray-100 border-b">
-            <tr>
-                <th class="py-3 px-4 text-right text-sm font-semibold text-gray-600">الحالة</th>
-                <th class="py-3 px-4 text-right text-sm font-semibold text-gray-600">اسم القطعة</th>
-                <th class="py-3 px-4 text-right text-sm font-semibold text-gray-600">الكمية المتبقية</th>
-                <th class="py-3 px-4 text-right text-sm font-semibold text-gray-600">حد إعادة الطلب</th>
-                <th class="py-3 px-4 text-right text-sm font-semibold text-gray-600">مقدار النقص</th>
-                <th class="py-3 px-4 text-right text-sm font-semibold text-gray-600">سعر الشراء</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for product in products %}
-            <tr class="border-b hover:bg-gray-50">
-                <td class="py-3 px-4">
-                    {% if product.stock_quantity == 0 %}
-                        <span class="h-3 w-3 block bg-red-500 rounded-full" title="نفذت الكمية"></span>
-                    {% elif product.stock_quantity <= product.reorder_level %}
-                        <span class="h-3 w-3 block bg-yellow-400 rounded-full" title="كمية منخفضة"></span>
-                    {% endif %}
-                </td>
-                <td class="py-3 px-4 font-medium text-gray-800">{{ product.name }}</td>
-                <td class="py-3 px-4 font-mono font-semibold text-red-600">{{ product.stock_quantity }}</td>
-                <td class="py-3 px-4 font-mono">{{ product.reorder_level }}</td>
-                <td class="py-3 px-4 font-mono font-bold text-blue-600">{{ product.deficit }}</td>
-                <td class="py-3 px-4 font-mono text-gray-500">{{ product.purchase_price|floatformat:2 }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6" class="text-center py-8 text-green-600 font-semibold">
-                    🎉 كل شيء متوفر! لا توجد نواقص حالياً.
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-{% endblock %}
