@@ -4,7 +4,7 @@
 
 {% block content %}
 <!-- 1. رأس الصفحة: العنوان والإجراءات الرئيسية -->
-<div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+<div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 pt-12">
     <h1 class="text-3xl font-bold text-gray-800">قائمة المنتجات</h1>
     <a href="{% url 'admin:store_product_add' %}" target="_blank" class="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>

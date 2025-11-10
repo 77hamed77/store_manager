@@ -1,109 +1,341 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="transition-colors duration-300">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}نظام إدارة المحل{% endblock %}</title>
+
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ✅ استدعاء مكتبة Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* ستايل مخصص للرابط النشط في القائمة، بتصميم أكثر وضوحًا */
-        .nav-link.active {
-            background-color: #4f46e5; /* indigo-600 */
-            color: #ffffff; /* white */
+        /* روابط التنقل */
+        .nav-link {
+            transition: all 0.25s ease-in-out;
         }
+
+        .nav-link.active {
+            background: linear-gradient(to left, #6366f1, #8b5cf6);
+            color: #fff !important;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+        }
+
         .nav-link.active svg {
-            color: #ffffff;
+            color: #fff;
+        }
+
+        .nav-link:hover:not(.active) {
+            background-color: rgba(99, 102, 241, 0.1);
+            color: #4f46e5;
+        }
+
+        /* تأثير الظهور الناعم */
+        body {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        body.loaded {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* أنماط الوضع الليلي */
+        .dark {
+            color-scheme: dark;
+        }
+
+        .dark body {
+            background-color: #111827;
+            color: #e5e7eb;
+        }
+
+        .dark nav {
+            background-color: #1f2937;
+            border-color: #374151;
+        }
+
+        .dark .nav-link:hover:not(.active) {
+            background-color: #374151;
+            color: #a5b4fc;
+        }
+
+        .dark .nav-link.active {
+            background: linear-gradient(to left, #4f46e5, #7c3aed);
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.5);
+        }
+
+        .dark footer {
+            background-color: #1f2937;
+            border-top-color: #374151;
+            color: #9ca3af;
         }
     </style>
+
     {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-gray-100 font-sans">
+
+<body class="bg-gray-50 text-gray-800 font-sans transition-colors duration-300">
+
     <div id="app-container">
-        <nav class="bg-white shadow-md print:hidden">
+
+        <!-- ✅ الشريط العلوي -->
+        <nav class="shadow-sm fixed top-0 left-0 w-full z-50 border-b border-gray-200 backdrop-blur bg-white/80 transition-colors duration-300">
             <div class="container mx-auto px-4 sm:px-6">
                 <div class="flex justify-between items-center py-3">
-                    
-                    <!-- 1. هوية بصرية وشعار محسن -->
-                    <a href="{% url 'dashboard' %}" class="flex items-center gap-2 text-xl font-bold text-gray-800">
-                        <svg class="w-7 h-7 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+
+                    <!-- شعار -->
+                    <a href="{% url 'dashboard' %}" class="flex items-center gap-2 text-xl font-bold hover:text-indigo-600 transition">
+                        <svg class="w-7 h-7 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
                         </svg>
                         <span>نظام المحل</span>
                     </a>
 
-                    <!-- 2. القائمة الرئيسية للشاشات الكبيرة مع أيقونات -->
-                    <div class="hidden md:flex items-center space-x-2 space-x-reverse">
-                        <a href="{% url 'dashboard' %}" class="nav-link flex items-center gap-2 text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors duration-200 {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    <!-- القائمة -->
+                    <div class="hidden md:flex items-center space-x-3 space-x-reverse">
+
+                        <a href="{% url 'dashboard' %}" 
+                           class="nav-link flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600
+                           {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h2l2 8h10l2-8H6zM7 18a2 2 0 100 4 2 2 0 000-4zm8 2a2 2 0 114 0 2 2 0 01-4 0z" />
+                            </svg>
                             <span>لوحة التحكم</span>
                         </a>
-                        <a href="{% url 'pos-view' %}" class="nav-link flex items-center gap-2 text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors duration-200 {% if request.resolver_match.url_name == 'pos-view' %}active{% endif %}">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+
+                        <a href="{% url 'pos-view' %}" 
+                           class="nav-link flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600
+                           {% if request.resolver_match.url_name == 'pos-view' %}active{% endif %}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 3h2l1 7h13l1.5-4H6" />
+                                <circle cx="9" cy="20" r="1.5" />
+                                <circle cx="18" cy="20" r="1.5" />
+                            </svg>
                             <span>نقطة البيع</span>
                         </a>
-                        <a href="{% url 'product-list' %}" class="nav-link flex items-center gap-2 text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors duration-200 {% if request.resolver_match.url_name == 'product-list' %}active{% endif %}">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4M4 7s0 0 0 0m16 0s0 0 0 0M12 15a4 4 0 100-8 4 4 0 000 8z"></path></svg>
+
+                        <a href="{% url 'product-list' %}" 
+                           class="nav-link flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600
+                           {% if request.resolver_match.url_name == 'product-list' %}active{% endif %}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 7v10c0 2.2 3.6 4 8 4s8-1.8 8-4V7c0-2.2-3.6-4-8-4S4 4.8 4 7zM12 15a4 4 0 100-8 4 4 0 000 8z" />
+                            </svg>
                             <span>المنتجات</span>
                         </a>
-                        <a href="{% url 'client-list' %}" class="nav-link flex items-center gap-2 text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md transition-colors duration-200 {% if request.resolver_match.url_name == 'client-list' %}active{% endif %}">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+
+                        <a href="{% url 'client-list' %}" 
+                           class="nav-link flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600
+                           {% if request.resolver_match.url_name == 'client-list' %}active{% endif %}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 11c1.657 0 3-1.343 3-3S17.657 5 16 5s-3 1.343-3 3 1.343 3 3 3zm-6 0a4 4 0 100-8 4 4 0 000 8zm6 2c-1.5 0-4 .75-4 2.25V19h8v-3.75C20 13.75 17.5 13 16 13zm-6-2c-2 0-6 1-6 3v3h6" />
+                            </svg>
                             <span>الديون</span>
                         </a>
-                        <a href="{% url 'low-stock-report' %}" class="nav-link flex items-center gap-2 text-yellow-600 hover:bg-yellow-100 px-3 py-2 rounded-md transition-colors duration-200 {% if request.resolver_match.url_name == 'low-stock-report' %}active{% endif %}">
-                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+
+                        <a href="{% url 'low-stock-report' %}" 
+                           class="nav-link flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600
+                           {% if request.resolver_match.url_name == 'low-stock-report' %}active{% endif %}">
+                            <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01M5 19h14c1.5 0 2.5-1.7 1.7-3L13.7 4c-.8-1.3-2.7-1.3-3.5 0L3.3 16c-.8 1.3.2 3 1.7 3z" />
+                            </svg>
                             <span>النواقص</span>
                         </a>
 
-                        <a href="{% url 'profit-report' %}" class="nav-link flex items-center gap-2 text-green-600 hover:bg-green-100 px-3 py-2 rounded-md transition-colors duration-200 {% if request.resolver_match.url_name == 'profit-report' %}active{% endif %}">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        <a href="{% url 'profit-report' %}" 
+                           class="nav-link flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600
+                           {% if request.resolver_match.url_name == 'profit-report' %}active{% endif %}">
+                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
                             <span>الأرباح</span>
                         </a>
-                    </div>
 
-
-                    <!-- زر القائمة للموبايل -->
-                    <div class="md:hidden">
-                        <button id="mobile-menu-button" class="p-2 rounded-md text-gray-600 hover:bg-gray-100">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                        <!-- 🌙 زر الوضع الليلي -->
+                        <button id="theme-toggle" class="ml-3 p-2 rounded-md text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                            <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M21.752 15.002A9.718 9.718 0 0112 21.75 9.75 9.75 0 1118.748 2.25a.75.75 0 01.104 1.485A7.501 7.501 0 0021.752 15z" />
+                            </svg>
                         </button>
                     </div>
+
+                    <!-- زر الموبايل -->
+                    <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16m0 6H4" />
+                        </svg>
+                    </button>
                 </div>
             </div>
 
-            <!-- القائمة المنسدلة للموبايل -->
-            <div id="mobile-menu" class="md:hidden hidden pb-3 px-2">
-                <a href="{% url 'dashboard' %}" class="nav-link block text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">لوحة التحكم</a>
-                <a href="{% url 'pos-view' %}" class="nav-link block text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md {% if request.resolver_match.url_name == 'pos-view' %}active{% endif %}">نقطة البيع</a>
-                <a href="{% url 'product-list' %}" class="nav-link block text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md {% if request.resolver_match.url_name == 'product-list' %}active{% endif %}">المنتجات</a>
-                <a href="{% url 'client-list' %}" class="nav-link block text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md {% if request.resolver_match.url_name == 'client-list' %}active{% endif %}">الديون</a>
-                <a href="{% url 'low-stock-report' %}" class="nav-link block text-yellow-600 hover:bg-yellow-100 px-3 py-2 rounded-md {% if request.resolver_match.url_name == 'low-stock-report' %}active{% endif %}">النواقص</a>
-                <a href="{% url 'profit-report' %}" class="nav-link block text-green-600 hover:bg-green-100 px-3 py-2 rounded-md {% if request.resolver_match.url_name == 'profit-report' %}active{% endif %}">الأرباح</a>
-                
+            <!-- قائمة الموبايل -->
+            <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-md">
+                <div class="flex flex-col p-3 space-y-2">
+                    <a href="{% url 'dashboard' %}" class="nav-link block px-3 py-2 rounded-lg {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">لوحة التحكم</a>
+                    <a href="{% url 'pos-view' %}" class="nav-link block px-3 py-2 rounded-lg {% if request.resolver_match.url_name == 'pos-view' %}active{% endif %}">نقطة البيع</a>
+                    <a href="{% url 'product-list' %}" class="nav-link block px-3 py-2 rounded-lg {% if request.resolver_match.url_name == 'product-list' %}active{% endif %}">المنتجات</a>
+                    <a href="{% url 'client-list' %}" class="nav-link block px-3 py-2 rounded-lg {% if request.resolver_match.url_name == 'client-list' %}active{% endif %}">الديون</a>
+                    <a href="{% url 'low-stock-report' %}" class="nav-link block px-3 py-2 rounded-lg {% if request.resolver_match.url_name == 'low-stock-report' %}active{% endif %}">النواقص</a>
+                    <a href="{% url 'profit-report' %}" class="nav-link block px-3 py-2 rounded-lg {% if request.resolver_match.url_name == 'profit-report' %}active{% endif %}">الأرباح</a>
+                </div>
             </div>
         </nav>
 
-        <main class="container mx-auto p-4 sm:p-6">
+        <!-- ✅ المحتوى -->
+        <main class="container mx-auto p-4 sm:p-6 pt-24 min-h-[calc(100vh-100px)] transition-opacity duration-700">
             {% block content %}{% endblock %}
         </main>
 
-        <footer class="text-center py-4 text-gray-500 text-sm print:hidden">
-            <p>&copy; {% now "Y" %} - نظام إدارة المحل. تم التطوير بواسطة الابن البار ❤️</p>
+        <!-- ✅ التذييل -->
+        <footer class="text-center py-4 text-gray-500 text-sm border-t border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700">
+            <p>&copy; {% now "Y" %} - نظام إدارة المحل. تم التطوير من قبل الابن البار ❤️</p>
         </footer>
     </div>
 
+    <!-- JS -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
+        // 🌙 تبديل الوضع الليلي
+        const html = document.documentElement;
+        const themeBtn = document.getElementById("theme-toggle");
+        const themeIcon = document.getElementById("theme-icon");
 
-            if (mobileMenuButton && mobileMenu) {
-                mobileMenuButton.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('hidden');
-                });
-            }
+        if (localStorage.theme === "dark" || (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+            html.classList.add("dark");
+        } else {
+            html.classList.remove("dark");
+        }
+
+        themeBtn.addEventListener("click", () => {
+            html.classList.toggle("dark");
+            localStorage.theme = html.classList.contains("dark") ? "dark" : "light";
         });
+
+        // 📱 القائمة في الجوال
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('mobile-menu-button');
+            const menu = document.getElementById('mobile-menu');
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+            // ✨ تأثير الظهور عند التحميل
+            setTimeout(() => document.body.classList.add('loaded'), 100);
+        });
+        const ctx = document.getElementById('salesChart').getContext('2d');
+
+  // 🎨 إعدادات الألوان حسب الوضع (فاتح / داكن)
+  const isDark = document.documentElement.classList.contains('dark');
+  const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+  const textColor = isDark ? '#e5e7eb' : '#374151';
+  const lineColor = isDark ? '#38bdf8' : '#3b82f6';
+  const bgFill = isDark ? 'rgba(56,189,248,0.15)' : 'rgba(59,130,246,0.1)';
+
+  // 🧾 إنشاء المخطط
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','1','2','3','4','5','6','7','8','9','10'],
+      datasets: [{
+        label: 'المبيعات',
+        data: [2,1,3,0,2,0,1,0,2,1,0,2,1,3,1,0,4,2,1,2,0,1,3,1,0,1,1,23,1,0],
+        borderColor: lineColor,
+        backgroundColor: bgFill,
+        borderWidth: 2,
+        tension: 0.4,
+        pointBackgroundColor: '#fff',
+        pointBorderColor: lineColor,
+        fill: true,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          grid: { color: gridColor },
+          ticks: { color: textColor }
+        },
+        y: {
+          grid: { color: gridColor },
+          ticks: { color: textColor, beginAtZero: true }
+        }
+      },
+      plugins: {
+        legend: {
+          labels: { color: textColor }
+        }
+      }
+    }
+  });
     </script>
+    <!-- 🎨 خلفية Canvas متحركة -->
+<canvas id="animated-bg" class="fixed inset-0 -z-10 w-full h-full"></canvas>
+
+<script>
+  const canvas = document.getElementById('animated-bg');
+  const ctx2 = canvas.getContext('2d');
+  let width = canvas.width = window.innerWidth;
+  let height = canvas.height = window.innerHeight;
+
+  // تحديث حجم الشاشة عند تغييرها
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
+
+  // إنشاء فقاعات خفيفة
+  const bubbles = Array.from({ length: 30 }).map(() => ({
+    x: Math.random() * width,
+    y: Math.random() * height,
+    r: Math.random() * 4 + 1,
+    d: Math.random() * 0.5 + 0.2
+  }));
+
+  function animateBubbles() {
+    const isDark = document.documentElement.classList.contains('dark');
+    const bgColor = isDark ? '#0f172a' : '#f8fafc';
+    const bubbleColor = isDark ? 'rgba(147, 197, 253, 0.15)' : 'rgba(59, 130, 246, 0.12)';
+
+    ctx2.fillStyle = bgColor;
+    ctx2.fillRect(0, 0, width, height);
+
+    ctx2.fillStyle = bubbleColor;
+    ctx2.beginPath();
+    bubbles.forEach(b => {
+      ctx2.moveTo(b.x, b.y);
+      ctx2.arc(b.x, b.y, b.r, 0, Math.PI * 2, true);
+    });
+    ctx2.fill();
+
+    bubbles.forEach(b => {
+      b.y -= b.d;
+      if (b.y < -100) {
+        b.y = height + 100;
+        b.x = Math.random() * width;
+      }
+    });
+    requestAnimationFrame(animateBubbles);
+  }
+
+  animateBubbles();
+</script>
+
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

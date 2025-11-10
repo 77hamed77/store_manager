@@ -1,128 +1,283 @@
 {% extends 'store/base.html' %}
-
 {% block title %}لوحة التحكم الرئيسية{% endblock %}
 
 {% block content %}
-<!-- 1. قسم الترحيب والإجراءات السريعة: الأهم أولاً -->
-<div class="mb-8">
-    <h1 class="text-3xl font-bold text-gray-800">صباح الخير!</h1>
-    <p class="text-gray-600">هذا هو ملخص أداء المحل اليوم.</p>
-    
-    <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <a href="{% url 'pos-view' %}" class="bg-blue-600 text-white flex flex-col items-center justify-center p-4 rounded-lg shadow-lg hover:bg-blue-700 transition-transform transform hover:scale-105">
-            <svg class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-            <span class="font-semibold">فاتورة جديدة</span>
-        </a>
-        <a href="{% url 'admin:store_product_add' %}" target="_blank" class="bg-green-600 text-white flex flex-col items-center justify-center p-4 rounded-lg shadow-lg hover:bg-green-700 transition-transform transform hover:scale-105">
-            <svg class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <span class="font-semibold">إضافة منتج</span>
-        </a>
-<a href="{% url 'client-add' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">            <svg class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
-            <span class="font-semibold">إضافة عميل</span>
-        </a>
-        <a href="{% url 'client-list' %}" class="bg-red-500 text-white flex flex-col items-center justify-center p-4 rounded-lg shadow-lg hover:bg-red-600 transition-transform transform hover:scale-105">
-            <svg class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 0l-3-3m3 3l-3 7m-1-7l-3 3m3-3l-3 7m6-4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-            <span class="font-semibold">تسجيل دفعة</span>
-        </a>
-    </div>
-</div>
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
 
-<!-- 2. قسم البطاقات التفاعلية -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <!-- بطاقة الديون -->
-    <a href="{% url 'client-list' %}" class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow block">
-        <h3 class="text-lg font-semibold text-gray-600">الديون القائمة</h3>
+  <div class="max-w-7xl mx-auto px-6 py-10 space-y-10 animate-fade-in">
+
+    <!-- 👋 الترحيب -->
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100">👋 صباح الخير!</h1>
+      <p class="text-gray-600 dark:text-gray-400">إليك ملخص أداء المتجر اليوم.</p>
+
+      <!-- الأزرار -->
+      <div class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-6">
+        <a href="{% url 'pos-view' %}"
+           class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex flex-col items-center justify-center p-5 rounded-2xl shadow-lg hover:scale-105 transition-all">
+          <svg class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          <span class="font-semibold text-sm sm:text-base">فاتورة جديدة</span>
+        </a>
+
+        <a href="{% url 'admin:store_product_add' %}" target="_blank"
+           class="bg-gradient-to-r from-green-500 to-emerald-600 text-white flex flex-col items-center justify-center p-5 rounded-2xl shadow-lg hover:scale-105 transition-all">
+          <svg class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="font-semibold text-sm sm:text-base">إضافة منتج</span>
+        </a>
+
+        <a href="{% url 'client-add' %}"
+           class="bg-gradient-to-r from-sky-500 to-blue-600 text-white flex flex-col items-center justify-center p-5 rounded-2xl shadow-lg hover:scale-105 transition-all">
+          <svg class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+          </svg>
+          <span class="font-semibold text-sm sm:text-base">إضافة عميل</span>
+        </a>
+
+        <a href="{% url 'client-list' %}"
+           class="bg-gradient-to-r from-rose-500 to-red-600 text-white flex flex-col items-center justify-center p-5 rounded-2xl shadow-lg hover:scale-105 transition-all">
+          <svg class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9 7h6m0 0l-3-3m3 3l-3 7m-1-7l-3 3m3-3l-3 7m6-4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          <span class="font-semibold text-sm sm:text-base">تسجيل دفعة</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ✅ بطاقات التحليل -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- الديون -->
+      <a href="{% url 'client-list' %}"
+         class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md border dark:border-gray-700 transition-all">
+        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">💰 الديون القائمة</h3>
         <div class="mt-4 flex justify-between items-baseline">
-            <p class="text-4xl font-bold text-red-600 font-mono">{{ total_debt_sum|floatformat:2 }}</p>
-            <p class="text-gray-500">على {{ top_debtors|length }} عملاء</p>
+          <p class="text-4xl font-bold text-red-600 font-mono">{{ total_debt_sum|floatformat:2 }}</p>
+          <p class="text-gray-500 dark:text-gray-400">على {{ top_debtors|length }} عملاء</p>
         </div>
-        <div class="mt-4 border-t pt-4">
-            <h4 class="font-semibold mb-2 text-sm">أعلى المدينين:</h4>
-            <ul class="space-y-2">
-                {% for client in top_debtors %}
-                <li class="flex justify-between items-center text-sm">
-                    <span>{{ client.name }}</span>
-                    <span class="font-semibold text-red-500 font-mono">{{ client.total_debt|floatformat:2 }}</span>
-                </li>
-                {% empty %}
-                <li class="text-gray-400">لا توجد ديون مسجلة حالياً.</li>
-                {% endfor %}
-            </ul>
-        </div>
-    </a>
+      </a>
 
-    <!-- بطاقة النواقص -->
-    <a href="{% url 'low-stock-report' %}" class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow block">
-        <h3 class="text-lg font-semibold text-gray-600">نواقص المخزون</h3>
+      <!-- النواقص -->
+      <a href="{% url 'low-stock-report' %}"
+         class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md border dark:border-gray-700 transition-all">
+        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">📦 نواقص المخزون</h3>
         <div class="mt-4 flex justify-between items-baseline">
-            <p class="text-4xl font-bold text-yellow-600 font-mono">{{ top_low_stock|length }}</p>
-            <p class="text-gray-500">منتجات تحتاج لإعادة طلب</p>
+          <p class="text-4xl font-bold text-yellow-600 font-mono">{{ top_low_stock|length }}</p>
+          <p class="text-gray-500 dark:text-gray-400">منتجات تحتاج لإعادة طلب</p>
         </div>
-        <div class="mt-4 border-t pt-4">
-            <h4 class="font-semibold mb-2 text-sm">أهم النواقص:</h4>
-            <ul class="space-y-2">
-                {% for product in top_low_stock %}
-                <li class="flex justify-between items-center text-sm">
-                    <span>{{ product.name }}</span>
-                    <span class="font-semibold text-yellow-600">المتبقي: {{ product.stock_quantity }}</span>
-                </li>
-                {% empty %}
-                <li class="text-gray-400">🎉 المخزون ممتاز!</li>
-                {% endfor %}
-            </ul>
-        </div>
-    </a>
-</div>
-
-<!-- 3. قسم الملاحظات والإحصائيات اليومية -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-    <!-- بطاقة ملاحظات سريعة -->
-    <div class="bg-white p-6 rounded-lg shadow-md">
-        <h3 class="font-bold text-lg mb-4">ملاحظات سريعة</h3>
-        <form method="POST" action="{% url 'dashboard' %}" class="mb-4">
-            {% csrf_token %}
-            <textarea name="note_content" rows="2" class="w-full p-2 border rounded-lg mb-2" placeholder="اكتب ملاحظة جديدة..."></textarea>
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" name="is_important" id="is_important" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-                    <label for="is_important" class="text-sm text-gray-700">ملاحظة هامة</label>
-                </div>
-                <button type="submit" class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600">إضافة</button>
-            </div>
-        </form>
-        <div class="border-t pt-4">
-            <h4 class="font-semibold mb-2">آخر الملاحظات:</h4>
-            <ul class="space-y-2 text-sm text-gray-600 list-disc list-inside">
-                {% for note in recent_notes %}
-                <li class="{% if note.is_important %} text-red-700 font-bold {% endif %}">
-                     {% if note.is_important %}⭐ {% endif %}{{ note.content }}
-                </li>
-                {% empty %}
-                <li class="list-none">لا توجد ملاحظات.</li>
-                {% endfor %}
-            </ul>
-        </div>
+      </a>
     </div>
 
-    <!-- بطاقة إحصائيات اليوم -->
-    <div class="bg-white p-6 rounded-lg shadow-md">
-        <h3 class="font-bold text-lg mb-4">ملخص اليوم</h3>
-        <div class="space-y-4">
-            <div class="flex items-start justify-between">
-                <div>
-                    <h4 class="font-semibold text-gray-500">مبيعات اليوم</h4>
-                    <p class="text-3xl font-bold text-green-600 font-mono">{{ daily_sales_total|floatformat:2 }}</p>
-                </div>
-                <div class="bg-green-100 p-3 rounded-full"><svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg></div>
-            </div>
-            <div class="flex items-start justify-between">
-                <div>
-                    <h4 class="font-semibold text-gray-500">فواتير اليوم</h4>
-                    <p class="text-3xl font-bold text-blue-600 font-mono">{{ daily_invoice_count }}</p>
-                </div>
-                <div class="bg-blue-100 p-3 rounded-full"><svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></div>
-            </div>
-        </div>
+    <!-- ✅ الملاحظات والمخطط -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+
+      <!-- الملاحظات --><div id="quick-notes" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md border border-gray-100 dark:border-gray-700">
+  <h3 class="font-bold text-lg mb-4 text-gray-700 dark:text-gray-100">📝 ملاحظات سريعة</h3>
+
+  <!-- النموذج: يعمل بدون JavaScript (fallback) ويدعمه AJAX إن كان متاحاً -->
+  <form id="note-form" method="POST" action="{% url 'dashboard' %}" class="mb-4">
+    {% csrf_token %}
+    <textarea id="note_content" name="note_content" rows="2"
+      class="w-full p-3 border rounded-lg border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 mb-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+      placeholder="اكتب ملاحظة جديدة..." required></textarea>
+
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <input type="checkbox" id="is_important" name="is_important" value="1"
+          class="h-4 w-4 text-indigo-600 focus:ring-indigo-500">
+        <label for="is_important" class="text-sm text-gray-700 dark:text-gray-300">ملاحظة هامة</label>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="note-submit" type="submit"
+          class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-all">إضافة</button>
+        <span id="note-status" class="text-sm text-gray-500 dark:text-gray-400 hidden">...حفظ</span>
+      </div>
     </div>
+  </form>
+
+  <!-- حاوية عرض الملاحظات (سيتم تحديثها ديناميكياً بعد الإضافة) -->
+  <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+    <h4 class="font-semibold mb-2 text-gray-700 dark:text-gray-300">آخر الملاحظات:</h4>
+    <ul id="notes-list" class="space-y-2 text-sm">
+      {% for note in recent_notes %}
+      <li class="note-item p-2 rounded-md {% if note.is_important %}bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-semibold{% else %}bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300{% endif %}">
+        {% if note.is_important %}⭐ {% endif %}{{ note.content }}
+      </li>
+      {% empty %}
+      <li id="no-notes" class="text-gray-400">لا توجد ملاحظات.</li>
+      {% endfor %}
+    </ul>
+  </div>
 </div>
+
+      <!-- ✅ المخطط -->
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border dark:border-gray-700">
+        <h3 class="font-bold text-lg mb-4 text-gray-700 dark:text-gray-100">📈 نشاط المبيعات خلال الأيام الماضية</h3>
+        <div class="relative w-full h-64">
+          <canvas id="salesChart" class="absolute inset-0 w-full h-full"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ✅ إضافة مكتبة Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const ctx = document.getElementById("salesChart");
+  if (!ctx) return;
+
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: ["11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+      datasets: [{
+        label: "Contributions",
+        data: [2, 0, 3, 0, 2, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 3, 2, 24, 2, 0, 2, 3, 0, 0, 0, 0, 0, 0, 0],
+        borderColor: "#3B82F6",
+        backgroundColor: "rgba(59,130,246,0.2)",
+        borderWidth: 2,
+        tension: 0.3,
+        fill: true,
+        pointBackgroundColor: "#fff",
+        pointRadius: 4,
+        pointHoverRadius: 5,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false, /* ✅ يمنع تمدد الصفحة */
+      plugins: {
+        legend: { display: false },
+      },
+      scales: {
+        x: { title: { display: true, text: "الأيام" } },
+        y: { title: { display: true, text: "المبيعات" }, beginAtZero: true }
+      }
+    }
+  });
+});
+
+/* دالة مساعدة لجلب csrftoken من الكوكيز (مطابقة لطريقة Django) */
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+/* عند تفعيل AJAX، نمنع إعادة التحميل ونرسل الطلب خلفية */
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('note-form');
+  const textarea = document.getElementById('note_content');
+  const importantCheckbox = document.getElementById('is_important');
+  const submitBtn = document.getElementById('note-submit');
+  const statusSpan = document.getElementById('note-status');
+  const notesList = document.getElementById('notes-list');
+  const noNotes = document.getElementById('no-notes');
+
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    // Progressive enhancement: إذا ضغط المستخدم والـ JS مفعل، نمنع الإرسال التقليدي ونستخدم fetch
+    e.preventDefault();
+
+    const content = textarea.value.trim();
+    if (!content) {
+      textarea.focus();
+      return;
+    }
+
+    // إظهار حالة حفظ مؤقتة وتعطيل الزر
+    submitBtn.disabled = true;
+    submitBtn.classList.add('opacity-60', 'cursor-not-allowed');
+    statusSpan.classList.remove('hidden');
+    statusSpan.textContent = 'جاري الحفظ...';
+
+    // تجهيز بيانات النموذج بنفس الأسماء التي ينتظرها السيرفر
+    const formData = new FormData();
+    formData.append('note_content', content);
+    // نضيف is_important كقيمة '1' أو '' (للتوافق مع كيف يتعامل السيرفر)
+    if (importantCheckbox.checked) {
+      formData.append('is_important', '1');
+    }
+
+    // إضافة csrf token
+    const csrftoken = getCookie('csrftoken') || '';
+
+    try {
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin',
+        headers: {
+          'X-CSRFToken': csrftoken,
+          'X-Requested-With': 'XMLHttpRequest',
+          // لا نضع 'Content-Type' لأن Fetch سيضبطها تلقائياً لـ FormData
+        },
+      });
+
+      if (!response.ok) {
+        // في حال أعاد السيرفر خطأ (مثلاً 400 أو 500) نعرض رسالة بسيطة
+        const text = await response.text().catch(() => 'حدث خطأ أثناء الحفظ.');
+        alert('فشل الحفظ: ' + (text || response.statusText));
+      } else {
+        // نجري تحديثًا في واجهة المستخدم مباشرة (بدون انتظار JSON)
+        // نُنشئ عنصر قائمة جديد يعكس الملاحظة المدخلة
+        const li = document.createElement('li');
+        li.className = 'note-item p-2 rounded-md';
+        if (importantCheckbox.checked) {
+          li.classList.add('bg-red-50', 'dark:bg-red-900/30', 'text-red-700', 'dark:text-red-300', 'font-semibold');
+          li.textContent = '⭐ ' + content;
+        } else {
+          li.classList.add('bg-gray-50', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+          li.textContent = content;
+        }
+
+        // إذا كانت هناك رسالة "لا توجد ملاحظات" نحذفها
+        if (noNotes) {
+          noNotes.remove();
+        }
+
+        // أضف الملاحظة في أعلى القائمة (أحدث أولاً)
+        if (notesList.firstChild) {
+          notesList.insertBefore(li, notesList.firstChild);
+        } else {
+          notesList.appendChild(li);
+        }
+
+        // تنظيف النموذج للاستخدام التالي
+        textarea.value = '';
+        importantCheckbox.checked = false;
+      }
+    } catch (err) {
+      console.error(err);
+      alert('حدث خطأ بالشبكة. حاول مرة أخرى.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+      statusSpan.classList.add('hidden');
+    }
+  });
+});
+</script>
+
+<style>
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-in-out both;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
 {% endblock %}
